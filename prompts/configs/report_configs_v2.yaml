@@ -1,0 +1,168 @@
+# 报告配置 V2.0 - 基于正交分离设计
+# 分析视角（如何分析）× 写作形式（如何组织）= 4种报告类型
+
+report_types:
+  stock_report:
+    # ========================================
+    # 专业视角 × 首次报告
+    # ========================================
+    professional_first:
+      description: "面向专业投资者的深度分析报告（首次完整版）"
+      components:
+        - base/system_prompt.md                        # 基础系统提示
+        - analysis_perspectives/professional.md        # 专业分析方法论
+        - writing_formats/first_time.md                # 首次报告写作原则
+        - report_structures/professional_first.md      # 具体报告结构
+        - components/data_requirements.md              # 数据搜索要求
+        - components/chart_specifications.md           # 图表规格
+        - components/compliance_rules.md               # 合规要求
+      output_specs:
+        chart_required: true
+        chart_types: ["kline", "volume"]
+        max_length: null                               # 不限制长度
+        min_sections: 5
+        format_style: "academic"
+    
+    # ========================================
+    # 专业视角 × 增量报告
+    # ========================================
+    professional_incremental:
+      description: "面向专业投资者的深度分析报告（增量更新版）"
+      components:
+        - base/system_prompt.md
+        - analysis_perspectives/professional.md        # 同样的分析方法
+        - writing_formats/incremental.md               # 增量写作原则
+        - report_structures/professional_incremental.md  # 增量报告结构
+        - components/data_requirements.md
+        - components/chart_specifications.md
+        - components/compliance_rules.md
+      output_specs:
+        chart_required: true
+        chart_types: ["kline", "volume"]
+        max_length: null
+        focus_on_changes: true                         # 重点关注变化
+        comparison_required: true                      # 需要对比上次
+        format_style: "academic"
+    
+    # ========================================
+    # 通俗视角 × 首次报告
+    # ========================================
+    normal_first:
+      description: "面向普通投资者的叙事分析报告（6段式完整版）"
+      components:
+        - base/system_prompt.md
+        - analysis_perspectives/normal.md              # 通俗叙事方法
+        - writing_formats/first_time.md                # 首次报告写作原则
+        - report_structures/normal_first.md            # 6段式结构
+        - components/data_requirements.md
+        - components/chart_specifications.md
+        - components/compliance_rules.md
+      output_specs:
+        chart_required: true
+        chart_types: ["kline"]
+        max_length: 3000                               # 控制在3000字
+        sections: 6                                    # 固定6段式
+        format_style: "narrative"                      # 叙事风格
+    
+    # ========================================
+    # 通俗视角 × 增量报告
+    # ========================================
+    normal_incremental:
+      description: "面向普通投资者的叙事分析报告（简化更新版）"
+      components:
+        - base/system_prompt.md
+        - analysis_perspectives/normal.md              # 同样的叙事方法
+        - writing_formats/incremental.md               # 增量写作原则
+        - report_structures/normal_incremental.md      # 简化的6段式
+        - components/data_requirements.md
+        - components/chart_specifications.md
+        - components/compliance_rules.md
+      output_specs:
+        chart_required: true
+        chart_types: ["kline"]
+        max_length: 2000                               # 控制在2000字
+        sections: 6
+        focus_on_changes: true
+        comparison_required: true
+        format_style: "narrative"
+
+# ========================================
+# 维度说明
+# ========================================
+dimensions:
+  # 分析视角（如何分析）
+  analysis_perspectives:
+    professional:
+      name: "专业深度分析"
+      description: "多维度深度分析，包含基本面、技术面、估值、行业"
+      target_audience: "专业投资者、机构研究员"
+      analysis_depth: "深度"
+      
+    normal:
+      name: "通俗叙事分析"
+      description: "故事化叙事，6段式逻辑推导"
+      target_audience: "普通投资者、散户"
+      analysis_depth: "适中"
+  
+  # 写作形式（如何组织）
+  writing_formats:
+    first:
+      name: "首次报告"
+      description: "完整版报告，包含所有背景和基础信息"
+      content_completeness: "完整"
+      background_required: true
+      
+    incremental:
+      name: "增量报告"
+      description: "只关注变化，对比上次报告"
+      content_completeness: "增量"
+      comparison_required: true
+      background_required: false
+
+# ========================================
+# 正交性验证
+# ========================================
+# 这两个维度是完全独立的：
+# - 修改"分析视角"不影响"写作形式"
+# - 修改"写作形式"不影响"分析视角"
+# - 任意组合都是有效的
+
+# ========================================
+# 扩展示例
+# ========================================
+# 未来可以轻松扩展：
+#
+# 1. 新增分析视角 - quantitative（量化分析）
+#    - 添加 analysis_perspectives/quantitative.md
+#    - 添加 4 个结构模板（quantitative_first, quantitative_incremental 等）
+#    - 更新配置，完成！
+#
+# 2. 新增写作形式 - weekly（周报）
+#    - 添加 writing_formats/weekly.md
+#    - 所有视角 × 周报 = N 种新报告类型
+#
+# 3. 组合爆炸但可控：
+#    - 3个视角 × 3种形式 = 9 种报告类型
+#    - 但只需要维护 3+3+9 = 15 个文件（而不是 9 个独立文件）
+
+# ========================================
+# 全局设置
+# ========================================
+global_settings:
+  # 通用的合规要求（所有报告都需要）
+  compliance:
+    no_investment_advice: true
+    risk_warning_required: true
+    objectivity_required: true
+    data_source_required: true
+  
+  # 文件命名规则
+  filename_patterns:
+    stock_report: "{stock_code}_{perspective}_{date}.md"
+    image: "images/{stock_code}/{chart_type}.png"
+  
+  # 默认设置
+  defaults:
+    chart_dpi: 300
+    chart_size: [1200, 800]
+    color_scheme: "china"  # 涨红跌绿

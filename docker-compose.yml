@@ -1,0 +1,63 @@
+services:
+  # Web 服务器 - 展示报告
+  web:
+    build: .
+    container_name: financial-reporter-web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./reports:/app/reports
+      - ./mini_agent/config/config.yaml:/app/mini_agent/config/config.yaml:ro
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    command: python web_server.py --host 0.0.0.0 --port 8080 --reports-dir /app/reports
+    networks:
+      - reporter-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # 定时任务调度器 - 生成报告
+  scheduler:
+    build: .
+    container_name: financial-reporter-scheduler
+    volumes:
+      - ./reports:/app/reports
+      - ./mini_agent/config/config.yaml:/app/mini_agent/config/config.yaml:ro
+    environment:
+      - TZ=Asia/Shanghai
+      - SCHEDULE_TIME=10:00  # 每天 10:00 执行
+    restart: unless-stopped
+    command: python scheduler.py --reports-dir /app/reports --time ${SCHEDULE_TIME:-10:00}
+    networks:
+      - reporter-network
+    depends_on:
+      - web
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+networks:
+  reporter-network:
+    driver: bridge
+
+volumes:
+  reports:
+    driver: local

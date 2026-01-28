@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金融市场日报 - 智能报告中心</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Elegant Editorial Palette */
+            --bg-body: #FAFAF9;      /* Stone 50 - Warm White */
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #FFFFFF;
+            
+            --text-primary: #1C1917; /* Stone 900 - Nearly Black */
+            --text-secondary: #57534E; /* Stone 600 */
+            --text-tertiary: #A8A29E; /* Stone 400 */
+            
+            --accent-color: #EA580C; /* Orange 600 - Burnt Orange */
+            --accent-hover: #C2410C; /* Orange 700 */
+            --accent-light: #FFEDD5; /* Orange 100 */
+            
+            --border-subtle: #E7E5E4; /* Stone 200 */
+            --border-focus: #D6D3D1;  /* Stone 300 */
+            
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline-color: var(--accent-color);
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+        }
+        
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .brand-icon {
+            font-size: 1.75rem;
+            color: var(--accent-color);
+            background: var(--accent-light);
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .brand-text h1 {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .brand-text p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+        }
+        
+        /* Sidebar Styling */
+        .stock-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+        
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stock-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .stock-item {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            background: var(--bg-sidebar);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .stock-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-subtle);
+        }
+        
+        .stock-item.active {
+            background: var(--text-primary);
+            color: white;
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stock-code {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stock-item.active .stock-code {
+            color: white;
+        }
+        
+        .stock-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .stock-item.active .stock-name {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .stock-market {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-body);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .stock-item.active .stock-market {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Content Area */
+        .content-area {
+            min-height: 600px;
+        }
+        
+        /* Empty States */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            text-align: center;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px dashed var(--border-focus);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: var(--text-secondary);
+        }
+
+        /* Report Header */
+        .report-header {
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid var(--text-primary);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .stock-title-group h2 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stock-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .meta-divider {
+            color: var(--text-tertiary);
+        }
+        
+        /* Version Tabs - Refined */
+        .version-tabs {
+            display: inline-flex;
+            background: var(--bg-body);
+            padding: 0.3rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 2rem;
+        }
+        
+        .version-tab {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-radius: 0.3rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .version-tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .version-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+        
+        .count-badge {
+            background: var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.1rem 0.4rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        .version-tab.active .count-badge {
+            background: var(--accent-light);
+            color: var(--accent-color);
+        }
+        
+        /* Report Grid - Editorial Style */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0; /* Sharp corners for editorial look */
+            padding: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--text-primary);
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            background: linear-gradient(to bottom right, #f8fafc, #fff);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        
+        .report-date {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .report-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .report-meta-item i {
+            color: var(--text-tertiary);
+            width: 1.25rem;
+            text-align: center;
+        }
+        
+        .card-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .btn-primary {
+            background: var(--text-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #000;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #D6D3D1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #A8A29E;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+            
+            .stock-list {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 1rem;
+            }
+            
+            .stock-item {
+                min-width: 200px;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>金融市场日报</h1>
+                    <p>智能金融分析平台</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <!-- Top actions can go here -->
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="stock-sidebar">
+                <div class="section-label">
+                    <i class="fas fa-chart-pie"></i> 监控组合
+                </div>
+                <div class="stock-list">
+                    {% if stocks %}
+                        {% for code, stock in stocks.items() %}
+                        <div class="stock-item" data-stock-code="{{ code }}" onclick="selectStock('{{ code }}')">
+                            <div class="stock-info">
+                                <span class="stock-code">{{ code }}</span>
+                                <span class="stock-name">{{ stock.name }}</span>
+                            </div>
+                            <span class="stock-market">{{ stock.market }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state" style="padding: 1rem; height: auto;">
+                            <p>暂无数据</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="content-area">
+                <div id="content-placeholder" class="empty-state">
+                    <i class="far fa-newspaper"></i>
+                    <h3>请选择股票</h3>
+                    <p>选择左侧股票查看深度分析报告</p>
+                </div>
+                
+                <div id="report-content" style="display: none;">
+                    <div class="report-header">
+                        <div class="stock-title-group">
+                            <h2 id="selected-stock-name"></h2>
+                            <div class="stock-meta">
+                                <span id="selected-stock-code"></span>
+                                <span class="meta-divider">•</span>
+                                <span id="report-count-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Version Tabs -->
+                    <div class="version-tabs">
+                        <button class="version-tab active" data-version="professional" onclick="selectVersion('professional')">
+                            专业版
+                            <span class="count-badge" id="professional-count">0</span>
+                        </button>
+                        <button class="version-tab" data-version="normal" onclick="selectVersion('normal')">
+                            普通版
+                            <span class="count-badge" id="normal-count">0</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Report Grid -->
+                    <div id="date-list" class="report-grid">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Data Injection -->
+    <script id="reports-data" type="application/json">
+        {{ reports_by_stock | tojson | safe }}
+    </script>
+    <script id="stocks-data" type="application/json">
+        {{ stocks | tojson | safe }}
+    </script>
+    
+    <script>
+        let currentStock = null;
+        let currentVersion = 'professional';
+        
+        // Load data safely
+        let reportsData = {};
+        let stocksData = {};
+        
+        try {
+            reportsData = JSON.parse(document.getElementById('reports-data').textContent);
+            stocksData = JSON.parse(document.getElementById('stocks-data').textContent);
+        } catch (e) {
+            console.error('Failed to load data:', e);
+        }
+        
+        function selectStock(stockCode) {
+            currentStock = stockCode;
+            
+            // UI Update
+            document.querySelectorAll('.stock-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const stockElement = document.querySelector(`[data-stock-code="${stockCode}"]`);
+            if (stockElement) {
+                stockElement.classList.add('active');
+            }
+            
+            // Show Content
+            document.getElementById('content-placeholder').style.display = 'none';
+            document.getElementById('report-content').style.display = 'block';
+            
+            // Update Header
+            const stockName = stocksData[stockCode]?.name || stockCode;
+            document.getElementById('selected-stock-name').textContent = stockName;
+            document.getElementById('selected-stock-code').textContent = `代码: ${stockCode}`;
+            
+            // Calculate Counts
+            const reports = reportsData[stockCode] || {professional: [], normal: []};
+            const professionalCount = reports.professional?.length || 0;
+            const normalCount = reports.normal?.length || 0;
+            
+            document.getElementById('report-count-text').textContent = `${professionalCount + normalCount} 份报告`;
+            document.getElementById('professional-count').textContent = professionalCount;
+            document.getElementById('normal-count').textContent = normalCount;
+            
+            // Reset to Professional
+            // 默认优先选择专业版，如果没有专业版但有普通版，则选择普通版
+            // 如果都已经有选中状态，则保持（切换股票时重置）
+            // 这里我们简单起见，切换股票时重置为有数据那个版本，优先专业版
+            
+            document.querySelectorAll('.version-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (professionalCount > 0 || normalCount === 0) {
+                currentVersion = 'professional';
+                const profBtn = document.querySelector('[data-version="professional"]');
+                if(profBtn) profBtn.classList.add('active');
+            } else {
+                currentVersion = 'normal';
+                const normBtn = document.querySelector('[data-version="normal"]');
+                if(normBtn) normBtn.classList.add('active');
+            }
+            
+            loadReports();
+        }
+        
+        function selectVersion(version) {
+            currentVersion = version;
+            
+            document.querySelectorAll('.version-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-version="${version}"]`).classList.add('active');
+            
+            loadReports();
+        }
+        
+        function loadReports() {
+            const listEl = document.getElementById('date-list');
+            
+            if (!currentStock) {
+                listEl.innerHTML = '';
+                return;
+            }
+            
+            const reports = reportsData[currentStock]?.[currentVersion] || [];
+            
+            if (reports.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="far fa-folder-open"></i>
+                        <h3>暂无历史报告</h3>
+                        <p>该分类下暂无历史报告</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render Cards
+            listEl.innerHTML = reports.map(report => `
+                <div class="report-card">
+                    <div class="card-header">
+                        <div class="report-date">${report.date}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="report-meta-item">
+                            <i class="far fa-clock"></i>
+                            <span>${new Date(report.timestamp).toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})} 生成</span>
+                        </div>
+                        <div class="report-meta-item">
+                            <i class="far fa-file-alt"></i>
+                            <span>${currentVersion === 'professional' ? '深度分析' : '简报'}</span>
+                        </div>
+                        <div class="card-actions">
+                            <a href="/report/${report.filename}" class="btn btn-primary">
+                                阅读报告
+                            </a>
+                            <a href="/download/${report.filename}" class="btn btn-outline" title="下载 PDF">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Auto-select 688256 if available, otherwise first stock
+        window.addEventListener('DOMContentLoaded', () => {
+            const defaultTarget = '688256';
+            if (stocksData[defaultTarget]) {
+                selectStock(defaultTarget);
+            } else {
+                const firstStock = Object.keys(stocksData)[0];
+                if (firstStock) {
+                    selectStock(firstStock);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

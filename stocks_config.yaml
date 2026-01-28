@@ -1,0 +1,53 @@
+# 股票追踪配置
+# Stock Tracking Configuration
+
+# 追踪的股票列表
+stocks:
+  - code: "688256"
+    name: "寒武纪"
+    market: "科创板"
+
+  - code: "688388"
+    name: "嘉元科技"
+    market: "科创板"
+    
+  - code: "601318"
+    name: "中国平安"
+    market: "主板"
+    
+  - code: "601212"
+    name: "白银有色"
+    market: "主板"
+    
+  - code: "688091"
+    name: "上海谊众"
+    market: "科创板"
+
+# 报告配置
+report:
+  # 首次报告：完整详细
+  first_report:
+    include_company_info: true      # 包含公司基本信息
+    include_fundamentals: true      # 包含基本面分析
+    include_history: true           # 包含历史走势
+    max_length: 2000               # 最大字数
+  
+  # 增量报告：简洁更新
+  daily_report:
+    include_comparison: true        # 包含对比分析
+    include_changes_only: true      # 只关注变化
+    max_length: 500                # 最大字数
+    highlight_threshold: 3.0       # 涨跌幅超过3%时高亮
+
+# 调度配置
+schedule:
+  time: "10:00"                    # 每天执行时间（建议在开盘后）
+  timezone: "Asia/Shanghai"         # 时区
+  
+# 通知配置（可选）
+notification:
+  enabled: false                    # 是否启用通知
+  # email:
+  #   to: "your@email.com"
+  # webhook:
+  #   url: "https://your-webhook-url"
